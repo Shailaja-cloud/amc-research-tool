@@ -83,6 +83,7 @@
   .btn-all:hover { background: #e0a310; }
   .screen { display: none; }
   .screen.active { display: block; }
+  .error-msg { background: #fde8e8; border-left: 4px solid #e74c3c; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #c0392b; margin-top: 12px; display: none; }
 </style>
 </head>
 <body>
@@ -98,7 +99,7 @@
   <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." oninput="updateApiStatus()" />
   <span class="api-status unset" id="apiStatus">Not set</span>
 </div>
-<div class="stepper" id="stepper">
+<div class="stepper">
   <div class="step-item active" id="step-0"><div class="step-num">1</div><span>Companies</span></div>
   <div class="step-line" id="line-0"></div>
   <div class="step-item" id="step-1"><div class="step-num">2</div><span>Context</span></div>
@@ -136,6 +137,7 @@
     <h2>Researching Companies...</h2>
     <p class="hint">This takes 30–60 seconds per company. Please keep this tab open and do not refresh.</p>
     <div class="progress-list" id="progressList"></div>
+    <div class="error-msg" id="errorMsg"></div>
   </div>
 </div>
 <div class="screen" id="screen-3">
@@ -163,8 +165,10 @@
 <script>
   let companies = [];
   let results = {};
+
   const SECTION_LABELS = { revenue_model:"Revenue Model", compliance_profile:"Compliance Profile", tech_and_tools:"Tech & Tools", customer_onboarding:"Customer Onboarding", competitive_positioning:"Competitive Positioning" };
   const FIELD_LABELS = { summary:"Summary", fee_structure:"Fee Structure", key_revenue_sources:"Key Revenue Sources", sebi_registration:"SEBI Registration", regulatory_status:"Regulatory Status", notable_actions:"Notable Actions", platforms_used:"Platforms Used", digital_capabilities:"Digital Capabilities", tech_stack_notes:"Tech Stack Notes", onboarding_process:"Onboarding Process", kyc_approach:"KYC Approach", minimum_investment:"Minimum Investment", key_differentiators:"Key Differentiators", main_competitors:"Main Competitors", competitive_gaps:"Competitive Gaps" };
+
   const SYSTEM_PROMPT = `You are an expert business research analyst specializing in the Indian asset management industry. Research the given AMC sub-company and return ONLY a valid JSON object with exactly this structure (no markdown, no extra text):
 {"revenue_model":{"summary":"...","fee_structure":"...","key_revenue_sources":"..."},"compliance_profile":{"sebi_registration":"...","regulatory_status":"...","notable_actions":"..."},"tech_and_tools":{"platforms_used":"...","digital_capabilities":"...","tech_stack_notes":"..."},"customer_onboarding":{"onboarding_process":"...","kyc_approach":"...","minimum_investment":"..."},"competitive_positioning":{"key_differentiators":"...","main_competitors":"...","competitive_gaps":"..."}}
 Rules: Never fabricate — write "Not publicly available" if unknown. Be specific, 2-3 sentences per field. Focus on India-specific context (SEBI, AMFI, NSDL, CDSL).`;
@@ -210,6 +214,7 @@ Rules: Never fabricate — write "Not publicly available" if unknown. Be specifi
     companies.forEach(c => results[c.id] = { status: 'idle', data: null });
     document.getElementById('progressList').innerHTML = companies.map(c => `<div class="progress-row" id="row-${c.id}"><span class="progress-name">${c.name}</span><span class="badge badge-idle" id="badge-${c.id}">⬜ Waiting</span></div>`).join('');
     goTo(2);
+
     for (const company of companies) {
       setStatus(company.id, 'researching');
       try {
@@ -219,18 +224,33 @@ Rules: Never fabricate — write "Not publicly available" if unknown. Be specifi
       } catch(e) {
         results[company.id] = { status: 'error', data: null };
         setStatus(company.id, 'error');
+        const errEl = document.getElementById('errorMsg');
+        errEl.style.display = 'block';
+        errEl.textContent = `Error researching ${company.name}: ${e.message}`;
       }
     }
-    buildReviewList();
-    buildDownloadList();
-    goTo(3);
+
+    const anyDone = companies.some(c => results[c.id]?.status === 'done');
+    if (anyDone) { buildReviewList(); buildDownloadList(); goTo(3); }
   }
 
   async function researchCompany(company, apiKey) {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-beta': 'web-search-2025-03-05' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 4000, system: SYSTEM_PROMPT, tools: [{ type: 'web_search_20250305', name: 'web_search' }], messages: [{ role: 'user', content: `Research this AMC sub-company and return the JSON report: ${company.name}${company.context ? '\n\nContext: ' + company.context : ''}` }] })
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'web-search-2025-03-05',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 4000,
+        system: SYSTEM_PROMPT,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: `Research this AMC sub-company and return the JSON report: ${company.name}${company.context ? '\n\nContext: ' + company.context : ''}` }]
+      })
     });
     if (!response.ok) { const err = await response.json(); throw new Error(err.error?.message || 'API error'); }
     const data = await response.json();
