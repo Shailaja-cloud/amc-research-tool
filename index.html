@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AMC Research Tool</title>
+<title>AMC Research Tool — Practus</title>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Lato:wght@400;600;700&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,20 +31,22 @@
   .card { max-width: 780px; margin: 0 auto 20px; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px; }
   .card h2 { font-family: 'Merriweather', serif; font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
   .hint { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
-  .api-bar { max-width: 780px; margin: 0 auto 20px; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 28px; display: flex; align-items: center; gap: 16px; border-left: 4px solid var(--yellow); }
+  .api-bar { max-width: 780px; margin: 0 auto 20px; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 28px; display: flex; align-items: center; gap: 16px; border-left: 4px solid var(--yellow); flex-wrap: wrap; }
   .api-bar label { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; }
-  .api-bar input { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; font-family: 'Lato', monospace; color: var(--text); outline: none; transition: border-color 0.2s; }
+  .api-bar input { flex: 1; min-width: 200px; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; font-family: 'Lato', monospace; color: var(--text); outline: none; transition: border-color 0.2s; }
   .api-bar input:focus { border-color: var(--teal); }
   .api-status { font-size: 12px; font-weight: 600; white-space: nowrap; }
   .api-status.set { color: var(--green); }
   .api-status.unset { color: #e74c3c; }
+  .api-note { max-width: 780px; margin: -12px auto 20px; font-size: 12px; color: var(--muted); padding: 0 4px; }
+  .api-note a { color: var(--teal); text-decoration: none; font-weight: 600; }
   textarea { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 14px; font-family: 'Lato', sans-serif; color: var(--text); resize: vertical; outline: none; transition: border-color 0.2s; line-height: 1.6; }
   textarea:focus { border-color: var(--teal); }
   .char-count { text-align: right; font-size: 12px; color: var(--muted); margin-top: 6px; margin-bottom: 20px; }
   .context-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
-  .context-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); }
+  .context-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); flex-wrap: wrap; }
   .company-tag { background: var(--teal); color: #fff; border-radius: 6px; padding: 4px 12px; font-size: 12px; font-weight: 700; white-space: nowrap; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
-  .context-row input { flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 9px 13px; font-size: 13px; font-family: 'Lato', sans-serif; outline: none; transition: border-color 0.2s; background: var(--white); }
+  .context-row input { flex: 1; min-width: 180px; border: 1px solid var(--border); border-radius: 8px; padding: 9px 13px; font-size: 13px; font-family: 'Lato', sans-serif; outline: none; transition: border-color 0.2s; background: var(--white); }
   .context-row input:focus { border-color: var(--teal); }
   .progress-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
   .progress-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); transition: border-color 0.3s; }
@@ -57,19 +59,19 @@
   .badge-done { background: #e8f8e8; color: #2a7a2a; }
   .badge-error { background: #fde8e8; color: #c0392b; }
   .result-block { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 28px; overflow: hidden; }
-  .result-header { background: var(--teal); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .result-header { background: var(--teal); padding: 14px 20px; }
   .result-header h3 { color: #fff; font-size: 16px; font-weight: 700; }
   .result-body { padding: 20px; }
   .section-block { margin-bottom: 20px; }
   .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--teal); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid var(--teal-light); }
-  .field-row { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
-  .field-label { min-width: 160px; font-size: 12px; font-weight: 700; color: var(--muted); padding-top: 9px; text-transform: capitalize; }
-  .field-input { flex: 1; border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-size: 13px; font-family: 'Lato', sans-serif; resize: vertical; outline: none; transition: border-color 0.2s; line-height: 1.5; }
+  .field-row { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; flex-wrap: wrap; }
+  .field-label { min-width: 180px; font-size: 12px; font-weight: 700; color: var(--muted); padding-top: 9px; text-transform: capitalize; }
+  .field-input { flex: 1; min-width: 200px; border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-size: 13px; font-family: 'Lato', sans-serif; resize: vertical; outline: none; transition: border-color 0.2s; line-height: 1.5; }
   .field-input:focus { border-color: var(--teal); }
   .download-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
-  .download-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); }
+  .download-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); flex-wrap: wrap; gap: 10px; }
   .download-row span { font-weight: 700; font-size: 14px; }
-  .btn-row { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+  .btn-row { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
   .btn { padding: 11px 26px; border-radius: 8px; font-size: 14px; font-weight: 700; font-family: 'Lato', sans-serif; cursor: pointer; border: none; transition: all 0.2s; }
   .btn-primary { background: var(--teal); color: #fff; }
   .btn-primary:hover { background: var(--teal-dark); }
@@ -83,22 +85,28 @@
   .btn-all:hover { background: #e0a310; }
   .screen { display: none; }
   .screen.active { display: block; }
-  .error-msg { background: #fde8e8; border-left: 4px solid #e74c3c; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #c0392b; margin-top: 12px; display: none; }
+  .error-msg { background: #fde8e8; border-left: 4px solid #e74c3c; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #c0392b; margin-top: 12px; display: none; line-height: 1.5; }
 </style>
 </head>
 <body>
+
 <div class="header">
   <div class="header-icon">🔍</div>
   <div>
     <h1>AMC Research Tool</h1>
-    <p>Research AMC sub-companies across revenue, compliance, tech, onboarding & competitive positioning — then download a Word report.</p>
+    <p>Pre-meeting research on AMC sub-companies — revenue model, compliance, tech, onboarding, competitive landscape, and Practus opportunity assessment.</p>
   </div>
 </div>
+
 <div class="api-bar">
-  <label>🔑 Anthropic API Key</label>
-  <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." oninput="updateApiStatus()" />
+  <label>🔑 Groq API Key</label>
+  <input type="password" id="apiKeyInput" placeholder="gsk_..." oninput="updateApiStatus()" />
   <span class="api-status unset" id="apiStatus">Not set</span>
 </div>
+<div class="api-note">
+  Free key at <a href="https://console.groq.com" target="_blank">console.groq.com</a> → Sign up → API Keys → Create API Key
+</div>
+
 <div class="stepper">
   <div class="step-item active" id="step-0"><div class="step-num">1</div><span>Companies</span></div>
   <div class="step-line" id="line-0"></div>
@@ -110,10 +118,11 @@
   <div class="step-line" id="line-3"></div>
   <div class="step-item" id="step-4"><div class="step-num">5</div><span>Download</span></div>
 </div>
+
 <div class="screen active" id="screen-0">
   <div class="card">
     <h2>Enter Company Names</h2>
-    <p class="hint">Type one company name, or multiple — one per line. Example: HDFC AMC, SBI Mutual Fund, Nippon India AMC.</p>
+    <p class="hint">Type one AMC sub-company name, or multiple — one per line.</p>
     <textarea id="companyInput" rows="7" placeholder="Enter company name(s) here...&#10;&#10;For multiple companies, put each on a new line." oninput="updateCharCount()"></textarea>
     <div class="char-count" id="charCount">No companies entered yet</div>
     <div class="btn-row">
@@ -121,10 +130,11 @@
     </div>
   </div>
 </div>
+
 <div class="screen" id="screen-1">
   <div class="card">
     <h2>Add Context <span style="font-weight:400;font-size:14px;color:#aaa">(Optional)</span></h2>
-    <p class="hint">Add any known details to help guide the research. Leave blank if unsure.</p>
+    <p class="hint">Any known details about the company or the meeting — e.g. "meeting with their CFO", "recently expanded distribution", "known to use legacy systems".</p>
     <div class="context-list" id="contextList"></div>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="goTo(0)">← Back</button>
@@ -132,14 +142,16 @@
     </div>
   </div>
 </div>
+
 <div class="screen" id="screen-2">
   <div class="card">
     <h2>Researching Companies...</h2>
-    <p class="hint">This takes 30–60 seconds per company. Please keep this tab open and do not refresh.</p>
+    <p class="hint">This takes 15–30 seconds per company. Please keep this tab open.</p>
     <div class="progress-list" id="progressList"></div>
     <div class="error-msg" id="errorMsg"></div>
   </div>
 </div>
+
 <div class="screen" id="screen-3">
   <div class="card">
     <h2>Review & Edit</h2>
@@ -151,10 +163,11 @@
     </div>
   </div>
 </div>
+
 <div class="screen" id="screen-4">
   <div class="card">
     <h2>Download Reports</h2>
-    <p class="hint">Download a Word-compatible report for each company. Opens in Microsoft Word or Google Docs.</p>
+    <p class="hint">Download a Word report for each company. Opens in Microsoft Word or Google Docs.</p>
     <div class="download-list" id="downloadList"></div>
     <div class="btn-row">
       <button class="btn btn-secondary" onclick="goTo(3)">← Back to Review</button>
@@ -162,22 +175,127 @@
     </div>
   </div>
 </div>
+
 <script>
   let companies = [];
   let results = {};
 
-  const SECTION_LABELS = { revenue_model:"Revenue Model", compliance_profile:"Compliance Profile", tech_and_tools:"Tech & Tools", customer_onboarding:"Customer Onboarding", competitive_positioning:"Competitive Positioning" };
-  const FIELD_LABELS = { summary:"Summary", fee_structure:"Fee Structure", key_revenue_sources:"Key Revenue Sources", sebi_registration:"SEBI Registration", regulatory_status:"Regulatory Status", notable_actions:"Notable Actions", platforms_used:"Platforms Used", digital_capabilities:"Digital Capabilities", tech_stack_notes:"Tech Stack Notes", onboarding_process:"Onboarding Process", kyc_approach:"KYC Approach", minimum_investment:"Minimum Investment", key_differentiators:"Key Differentiators", main_competitors:"Main Competitors", competitive_gaps:"Competitive Gaps" };
+  const SECTION_LABELS = {
+    company_overview: "1. Company Overview",
+    revenue_model: "2. Revenue Model",
+    compliance_profile: "3. Compliance Profile",
+    tech_and_tools: "4. Tech & Tools",
+    customer_onboarding: "5. Customer Onboarding",
+    competitive_landscape: "6. Competitive Landscape",
+    finance_and_operations: "7. Finance & Operations Health",
+    practus_opportunity: "8. Practus Opportunity Assessment"
+  };
 
-  const SYSTEM_PROMPT = `You are an expert business research analyst specializing in the Indian asset management industry. Research the given AMC sub-company and return ONLY a valid JSON object with exactly this structure (no markdown, no extra text):
-{"revenue_model":{"summary":"...","fee_structure":"...","key_revenue_sources":"..."},"compliance_profile":{"sebi_registration":"...","regulatory_status":"...","notable_actions":"..."},"tech_and_tools":{"platforms_used":"...","digital_capabilities":"...","tech_stack_notes":"..."},"customer_onboarding":{"onboarding_process":"...","kyc_approach":"...","minimum_investment":"..."},"competitive_positioning":{"key_differentiators":"...","main_competitors":"...","competitive_gaps":"..."}}
-Rules: Never fabricate — write "Not publicly available" if unknown. Be specific, 2-3 sentences per field. Focus on India-specific context (SEBI, AMFI, NSDL, CDSL).`;
+  const FIELD_LABELS = {
+    business_model: "Business Model",
+    size_and_scale: "Size & Scale",
+    key_products: "Key Products / Services",
+    leadership_structure: "Leadership",
+    summary: "Revenue Summary",
+    fee_structure: "Fee Structure",
+    key_revenue_sources: "Key Revenue Sources",
+    aum_and_growth: "AUM & Growth Trend",
+    sebi_registration: "SEBI Registration",
+    regulatory_status: "Regulatory Status",
+    notable_actions: "Notable Regulatory Actions",
+    compliance_gaps: "Known Compliance Gaps",
+    platforms_used: "Platforms Used",
+    digital_capabilities: "Digital Capabilities",
+    tech_stack_notes: "Tech Stack Assessment",
+    automation_level: "Automation & Process Maturity",
+    onboarding_process: "Onboarding Process",
+    kyc_approach: "KYC Approach",
+    minimum_investment: "Minimum Investment",
+    onboarding_pain_points: "Known Onboarding Pain Points",
+    main_competitors: "Main Competitors",
+    what_competitors_do_better: "What Competitors Do Better",
+    key_differentiators: "How This Company Differentiates",
+    competitive_gaps: "Competitive Gaps & Opportunities",
+    financial_performance: "Financial Performance",
+    finance_function_maturity: "Finance Function Maturity",
+    operational_pain_points: "Operational Pain Points",
+    growth_signals: "Growth & Transformation Signals",
+    where_practus_can_help: "Where Practus Can Help",
+    most_relevant_services: "Most Relevant Practus Services",
+    conversation_hooks: "Conversation Hooks for the Meeting",
+    questions_to_ask: "Questions to Ask"
+  };
+
+  const SYSTEM_PROMPT = `You are a senior business development analyst at Practus, a consulting firm delivering Finance Transformation, Digital Transformation, CFO services, Business Enablement, Post-Merger Integration, and Data Analytics as a Service to companies across India.
+
+Your task is to research an AMC (Asset Management Company) sub-company in India and prepare a detailed pre-meeting brief for a Practus consultant going into a sales meeting or pitch.
+
+Practus services include:
+- Finance Transformation: CFO services, MIS, budgeting, cash flow improvement, P&L optimization, financial reporting
+- Digital Transformation: ERP implementation, process automation, tech modernization, workflow digitization
+- Business Enablement: Revenue optimization, operating model design, org restructuring, performance management
+- Data Analytics as a Service: Dashboards, data pipelines, reporting automation, KPI frameworks
+- Post-Merger Integration: Integration planning, synergy realization, org harmonization
+
+Return ONLY a valid JSON object with exactly this structure (no markdown, no preamble, no extra text):
+{
+  "company_overview": {
+    "business_model": "Exactly what does this sub-company do within the AMC group? Specific function — distribution, advisory, PMS, AIF, technology arm, etc.",
+    "size_and_scale": "AUM if known, employee count, branch network, client base, geographic presence in India.",
+    "key_products": "Specific products — mutual funds, PMS, AIF, wealth advisory, robo-advisory, NRI services, etc.",
+    "leadership_structure": "CEO/MD/CFO names if known. Any recent leadership changes or exits."
+  },
+  "revenue_model": {
+    "summary": "Detailed explanation of how this company makes money — management fees, advisory fees, distribution commissions, trail fees, performance fees.",
+    "fee_structure": "Specific fee percentages or expense ratios if known. How do fees compare to industry norms?",
+    "key_revenue_sources": "Rank their revenue streams by importance. Which products or client segments drive the most revenue?",
+    "aum_and_growth": "AUM size and trajectory. Is AUM growing, declining, or stagnant? Any known revenue pressure from fee compression or regulatory changes?"
+  },
+  "compliance_profile": {
+    "sebi_registration": "SEBI registration type (IA, RIA, PMS, MF, AIF, Research Analyst etc.) and registration number if known. AMFI status.",
+    "regulatory_status": "Current standing with SEBI and other regulators. Any active proceedings or clean record.",
+    "notable_actions": "Any SEBI penalties, show cause notices, consent orders, adjudication proceedings in last 3 years. Be specific if known.",
+    "compliance_gaps": "Known compliance weaknesses — investor grievance redressal, disclosure gaps, reporting delays, KYC backlogs."
+  },
+  "tech_and_tools": {
+    "platforms_used": "Specific platforms — Wealth Spectrum, Finacle Wealth, proprietary WMS, CRM tools (Salesforce, Zoho), portfolio management software, investor portals, mobile apps.",
+    "digital_capabilities": "App features, online portal quality, API integrations with exchanges/depositories (CDSL, NSDL, BSE StarMF), digital onboarding availability.",
+    "tech_stack_notes": "Overall tech maturity — are they ahead, at par, or behind peers? Any known tech debt or modernization in progress?",
+    "automation_level": "How automated are their core processes — KYC, onboarding, reconciliation, reporting, NAV processing? Still manual or largely automated?"
+  },
+  "customer_onboarding": {
+    "onboarding_process": "Step-by-step client onboarding journey — from first contact to account activation. Digital-first or paper-heavy?",
+    "kyc_approach": "KYC process in detail — documents required, KRA used (CVL, CAMS, Karvy), video KYC availability, in-person requirement.",
+    "minimum_investment": "Minimum investment thresholds by product type — SIP minimums, lump sum, PMS minimum ticket size, AIF commitment.",
+    "onboarding_pain_points": "Known friction points in their onboarding — long TAT, document-heavy process, poor digital UX, complaints from distributors or clients."
+  },
+  "competitive_landscape": {
+    "main_competitors": "Name 3-5 direct competitors operating in the same segment and client type. Be specific — not just 'other AMCs' but actual named entities.",
+    "what_competitors_do_better": "Specific things competitors are doing better — technology, pricing, distribution reach, product range, brand, client servicing.",
+    "key_differentiators": "What genuinely sets this company apart from competitors — niche focus, fund performance, technology edge, specific client relationships.",
+    "competitive_gaps": "Specific gaps this company has vs competitors that represent either a risk or an opportunity Practus could help address."
+  },
+  "finance_and_operations": {
+    "financial_performance": "Revenue, profitability, cost-to-income ratio if known. Any financial pressures — rising costs, fee compression, margin squeeze.",
+    "finance_function_maturity": "How mature is their finance and accounting function? Strong in-house CFO team or under-resourced? Signs of weak MIS, delayed closings, manual reconciliation.",
+    "operational_pain_points": "Specific known operational challenges — back-office bottlenecks, high error rates, manual processes, distributor servicing issues, slow NAV or reporting.",
+    "growth_signals": "Recent expansions, new product launches, hiring sprees in finance or tech, strategic announcements, or transformation initiatives underway."
+  },
+  "practus_opportunity": {
+    "where_practus_can_help": "3-4 specific, concrete areas where Practus can deliver measurable value for this company. Be very specific — not 'digital transformation' but 'their reconciliation process is manual and causes 2-3 day reporting delays which Practus can automate.'",
+    "most_relevant_services": "Top 2-3 Practus service lines most relevant to this company. For each one explain exactly why it fits and what outcome Practus would deliver.",
+    "conversation_hooks": "4-5 specific talking points to open the conversation — pain points that will resonate immediately with their CFO or CEO. Frame as problems, not solutions.",
+    "questions_to_ask": "5 sharp diagnostic questions to ask in the meeting that will uncover needs and create openings for Practus. Questions should feel consultative, not salesy."
+  }
+}
+
+Be extremely specific throughout. Avoid generic statements. If specific data is not publicly available, say so clearly but still provide your best analytical assessment based on deep knowledge of the Indian AMC industry, SEBI regulations, and common challenges faced by AMC sub-companies of this type and scale.`;
 
   function updateApiStatus() {
     const key = document.getElementById('apiKeyInput').value.trim();
     const status = document.getElementById('apiStatus');
-    if (key.startsWith('sk-ant')) { status.textContent = '✓ Key set'; status.className = 'api-status set'; }
-    else if (key.length > 0) { status.textContent = '⚠ Check format'; status.className = 'api-status unset'; }
+    if (key.startsWith('gsk_')) { status.textContent = '✓ Key set'; status.className = 'api-status set'; }
+    else if (key.length > 0) { status.textContent = '⚠ Should start with gsk_'; status.className = 'api-status unset'; }
     else { status.textContent = 'Not set'; status.className = 'api-status unset'; }
   }
 
@@ -193,7 +311,7 @@ Rules: Never fabricate — write "Not publicly available" if unknown. Be specifi
     document.getElementById('screen-' + step).classList.add('active');
     for (let i = 0; i <= 4; i++) {
       const el = document.getElementById('step-' + i);
-      el.classList.remove('active','done');
+      el.classList.remove('active', 'done');
       if (i < step) el.classList.add('done');
       else if (i === step) el.classList.add('active');
       if (i < 4) document.getElementById('line-' + i).classList.toggle('done', i < step);
@@ -202,17 +320,29 @@ Rules: Never fabricate — write "Not publicly available" if unknown. Be specifi
   }
 
   function goToContext() {
-    companies = document.getElementById('companyInput').value.trim().split('\n').filter(l => l.trim()).map((name, i) => ({ id: 'c' + i, name: name.trim(), context: '' }));
-    document.getElementById('contextList').innerHTML = companies.map(c => `<div class="context-row"><div class="company-tag">${c.name}</div><input type="text" placeholder="e.g. HNI-focused, Mumbai-based..." oninput="companies.find(x=>x.id==='${c.id}').context=this.value" /></div>`).join('');
+    companies = document.getElementById('companyInput').value.trim()
+      .split('\n').filter(l => l.trim())
+      .map((name, i) => ({ id: 'c' + i, name: name.trim(), context: '' }));
+    document.getElementById('contextList').innerHTML = companies.map(c => `
+      <div class="context-row">
+        <div class="company-tag" title="${c.name}">${c.name}</div>
+        <input type="text" placeholder="e.g. meeting with CFO, recently launched PMS, known legacy systems..."
+          oninput="companies.find(x=>x.id==='${c.id}').context=this.value" />
+      </div>`).join('');
     goTo(1);
   }
 
   async function startResearch() {
     const apiKey = document.getElementById('apiKeyInput').value.trim();
-    if (!apiKey) { alert('Please enter your Anthropic API key at the top.'); return; }
+    if (!apiKey) { alert('Please enter your Groq API key at the top.'); return; }
     results = {};
     companies.forEach(c => results[c.id] = { status: 'idle', data: null });
-    document.getElementById('progressList').innerHTML = companies.map(c => `<div class="progress-row" id="row-${c.id}"><span class="progress-name">${c.name}</span><span class="badge badge-idle" id="badge-${c.id}">⬜ Waiting</span></div>`).join('');
+    document.getElementById('progressList').innerHTML = companies.map(c => `
+      <div class="progress-row" id="row-${c.id}">
+        <span class="progress-name">${c.name}</span>
+        <span class="badge badge-idle" id="badge-${c.id}">⬜ Waiting</span>
+      </div>`).join('');
+    document.getElementById('errorMsg').style.display = 'none';
     goTo(2);
 
     for (const company of companies) {
@@ -235,44 +365,61 @@ Rules: Never fabricate — write "Not publicly available" if unknown. Be specifi
   }
 
   async function researchCompany(company, apiKey) {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const userMsg = `Research this Indian AMC sub-company for a Practus pre-meeting brief: ${company.name}${company.context ? '\n\nAdditional context: ' + company.context : ''}
+
+Cover all 8 sections thoroughly: company overview, revenue model, compliance, tech and tools, customer onboarding, competitive landscape, finance and operations health, and Practus opportunity assessment. Be very specific and actionable throughout.`;
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'web-search-2025-03-05',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 4000,
-        system: SYSTEM_PROMPT,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{ role: 'user', content: `Research this AMC sub-company and return the JSON report: ${company.name}${company.context ? '\n\nContext: ' + company.context : ''}` }]
+        model: 'llama-3.3-70b-versatile',
+        temperature: 0.2,
+        max_tokens: 8000,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: userMsg }
+        ]
       })
     });
-    if (!response.ok) { const err = await response.json(); throw new Error(err.error?.message || 'API error'); }
+
+    if (!response.ok) { const err = await response.json(); throw new Error(err.error?.message || 'Groq API error'); }
     const data = await response.json();
-    const raw = data.content?.filter(b => b.type === 'text').pop()?.text || '';
+    const raw = data.choices?.[0]?.message?.content || '';
     const match = raw.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error('Could not parse response');
+    if (!match) throw new Error('Could not parse response — try again');
     return JSON.parse(match[0]);
   }
 
   function setStatus(id, status) {
     const labels = { idle:['badge-idle','⬜ Waiting'], researching:['badge-researching','⏳ Researching...'], done:['badge-done','✅ Done'], error:['badge-error','❌ Error'] };
-    document.getElementById('row-'+id).className = 'progress-row ' + status;
-    const badge = document.getElementById('badge-'+id);
+    document.getElementById('row-' + id).className = 'progress-row ' + status;
+    const badge = document.getElementById('badge-' + id);
     badge.className = 'badge ' + labels[status][0];
     badge.textContent = labels[status][1];
   }
 
   function buildReviewList() {
-    document.getElementById('reviewList').innerHTML = companies.filter(c => results[c.id]?.status === 'done').map(company => {
-      const data = results[company.id].data;
-      return `<div class="result-block"><div class="result-header"><h3>${company.name}</h3></div><div class="result-body">${Object.entries(data).map(([sKey,fields]) => `<div class="section-block"><div class="section-title">${SECTION_LABELS[sKey]||sKey}</div>${Object.entries(fields).map(([fKey,val]) => `<div class="field-row"><div class="field-label">${FIELD_LABELS[fKey]||fKey}</div><textarea class="field-input" rows="3" oninput="updateField('${company.id}','${sKey}','${fKey}',this.value)">${val||''}</textarea></div>`).join('')}</div>`).join('')}</div></div>`;
-    }).join('');
+    document.getElementById('reviewList').innerHTML = companies
+      .filter(c => results[c.id]?.status === 'done')
+      .map(company => {
+        const data = results[company.id].data;
+        return `<div class="result-block">
+          <div class="result-header"><h3>${company.name}</h3></div>
+          <div class="result-body">
+            ${Object.entries(data).map(([sKey, fields]) => `
+              <div class="section-block">
+                <div class="section-title">${SECTION_LABELS[sKey] || sKey}</div>
+                ${Object.entries(fields).map(([fKey, val]) => `
+                  <div class="field-row">
+                    <div class="field-label">${FIELD_LABELS[fKey] || fKey}</div>
+                    <textarea class="field-input" rows="3"
+                      oninput="updateField('${company.id}','${sKey}','${fKey}',this.value)">${val || ''}</textarea>
+                  </div>`).join('')}
+              </div>`).join('')}
+          </div>
+        </div>`;
+      }).join('');
   }
 
   function updateField(companyId, section, field, value) {
@@ -280,32 +427,80 @@ Rules: Never fabricate — write "Not publicly available" if unknown. Be specifi
   }
 
   function buildDownloadList() {
-    document.getElementById('downloadList').innerHTML = companies.filter(c => results[c.id]?.status === 'done').map(company => `<div class="download-row"><span>${company.name}</span><button class="btn btn-download" id="dl-${company.id}" onclick="downloadReport('${company.id}','${company.name}')">⬇ Download .doc</button></div>`).join('');
+    document.getElementById('downloadList').innerHTML = companies
+      .filter(c => results[c.id]?.status === 'done')
+      .map(company => `
+        <div class="download-row">
+          <span>${company.name}</span>
+          <button class="btn btn-download" id="dl-${company.id}" onclick="downloadReport('${company.id}','${company.name}')">
+            ⬇ Download .doc
+          </button>
+        </div>`).join('');
   }
 
   function downloadReport(id, name) {
-    const btn = document.getElementById('dl-'+id);
+    const btn = document.getElementById('dl-' + id);
     if (btn) { btn.textContent = 'Generating...'; btn.disabled = true; }
     const data = results[id]?.data;
-    if (!data) { alert('No data for this company.'); return; }
-    const date = new Date().toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' });
-    let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>body{font-family:Calibri,sans-serif;font-size:11pt;color:#1a2e3b;margin:2cm}h1{font-family:'Times New Roman',serif;font-size:22pt;color:#228899;text-align:center;border-bottom:3px solid #228899;padding-bottom:10px}.date{text-align:center;color:#888;font-size:10pt;margin-bottom:24pt;font-style:italic}h2{font-size:13pt;color:#228899;background:#e8f4f6;padding:6pt 10pt;border-left:4pt solid #228899;margin-top:18pt}table{width:100%;border-collapse:collapse;margin-bottom:12pt}td{padding:7pt 10pt;border:1pt solid #dde4e8;vertical-align:top;font-size:10.5pt;line-height:1.5}td:first-child{font-weight:bold;background:#f4f7f9;width:28%;color:#444}.footer{text-align:center;color:#aaa;font-size:9pt;margin-top:24pt;font-style:italic;border-top:1pt solid #eee;padding-top:10pt}</style></head><body><h1>${name}</h1><div class="date">Research Report | Generated ${date} | Internal Use Only</div>`;
+    if (!data) { alert('No data available.'); return; }
+    const date = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    let html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+    <head><meta charset="utf-8"><style>
+      body{font-family:Calibri,sans-serif;font-size:11pt;color:#1a2e3b;margin:2cm}
+      h1{font-family:'Times New Roman',serif;font-size:22pt;color:#228899;text-align:center;border-bottom:3px solid #228899;padding-bottom:10px}
+      .subtitle{text-align:center;color:#888;font-size:10pt;margin-bottom:24pt;font-style:italic}
+      h2{font-size:13pt;color:#228899;background:#e8f4f6;padding:6pt 10pt;border-left:4pt solid #228899;margin-top:20pt;margin-bottom:8pt}
+      table{width:100%;border-collapse:collapse;margin-bottom:12pt}
+      td{padding:8pt 10pt;border:1pt solid #dde4e8;vertical-align:top;font-size:10.5pt;line-height:1.6}
+      td:first-child{font-weight:bold;background:#f4f7f9;width:30%;color:#444}
+      .opportunity-box{background:#fffbe6;border:1.5pt solid #FDB81A;border-radius:4pt;padding:10pt 14pt;margin-bottom:10pt}
+      .opportunity-box strong{color:#1a2e3b;font-size:11pt;display:block;margin-bottom:4pt}
+      .opportunity-box p{font-size:10.5pt;line-height:1.6;color:#333}
+      .footer{text-align:center;color:#aaa;font-size:9pt;margin-top:28pt;font-style:italic;border-top:1pt solid #eee;padding-top:10pt}
+    </style></head><body>
+    <h1>${name}</h1>
+    <div class="subtitle">Practus Pre-Meeting Research Brief &nbsp;|&nbsp; ${date} &nbsp;|&nbsp; Confidential — Internal Use Only</div>`;
+
     for (const [sKey, fields] of Object.entries(data)) {
-      html += `<h2>${SECTION_LABELS[sKey]||sKey}</h2><table>`;
-      for (const [fKey, val] of Object.entries(fields)) html += `<tr><td>${FIELD_LABELS[fKey]||fKey}</td><td>${val||'Not available'}</td></tr>`;
-      html += `</table>`;
+      const isOpportunity = sKey === 'practus_opportunity';
+      html += `<h2>${SECTION_LABELS[sKey] || sKey}</h2>`;
+      if (isOpportunity) {
+        for (const [fKey, val] of Object.entries(fields)) {
+          html += `<div class="opportunity-box"><strong>${FIELD_LABELS[fKey] || fKey}</strong><p>${(val || 'Not available').replace(/\n/g, '<br/>')}</p></div>`;
+        }
+      } else {
+        html += `<table>`;
+        for (const [fKey, val] of Object.entries(fields)) {
+          html += `<tr><td>${FIELD_LABELS[fKey] || fKey}</td><td>${(val || 'Not available').replace(/\n/g, '<br/>')}</td></tr>`;
+        }
+        html += `</table>`;
+      }
     }
-    html += `<div class="footer">Generated by AMC Research Tool. For internal use only.</div></body></html>`;
+
+    html += `<div class="footer">Prepared by Practus Research Tool &nbsp;|&nbsp; For internal use only &nbsp;|&nbsp; Verify all findings before client-facing use</div></body></html>`;
+
     const blob = new Blob([html], { type: 'application/msword' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = name.replace(/\s+/g,'_') + '_Research_Report.doc'; a.click();
+    a.href = url;
+    a.download = name.replace(/\s+/g, '_') + '_Practus_Brief.doc';
+    a.click();
     URL.revokeObjectURL(url);
     setTimeout(() => { if (btn) { btn.textContent = '✓ Downloaded'; btn.disabled = false; } }, 800);
   }
 
-  function downloadAll() { companies.filter(c => results[c.id]?.status === 'done').forEach(c => downloadReport(c.id, c.name)); }
-  function startOver() { document.getElementById('companyInput').value = ''; updateCharCount(); companies = []; results = {}; goTo(0); }
+  function downloadAll() {
+    companies.filter(c => results[c.id]?.status === 'done').forEach(c => downloadReport(c.id, c.name));
+  }
+
+  function startOver() {
+    document.getElementById('companyInput').value = '';
+    updateCharCount();
+    companies = [];
+    results = {};
+    goTo(0);
+  }
 </script>
 </body>
 </html>
